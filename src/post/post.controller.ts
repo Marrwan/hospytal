@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Request, UseGuards, Query } from '@nestjs/common';
 import { PostService } from './post.service';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -58,5 +58,19 @@ export class PostController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async remove(@Param('id') id: number, @Request() req) {
     return this.postService.remove(id, req.user.userId);
+  }
+
+  @Get('category/:categoryId')
+  @ApiOperation({ summary: 'Get posts by category' })
+  @ApiResponse({ status: 200, description: 'Return posts by category.', type: [PostEntity] })
+  async findByCategory(@Param('categoryId') categoryId: number) {
+    return this.postService.findByCategory(categoryId);
+  }
+
+  @Get('timestamp')
+  @ApiOperation({ summary: 'Get posts by timestamp' })
+  @ApiResponse({ status: 200, description: 'Return posts by timestamp.', type: [PostEntity] })
+  async findByTimestamp(@Query('start') startTimestamp: string, @Query('end') endTimestamp: string) {
+    return this.postService.findByTimestamp(startTimestamp, endTimestamp);
   }
 }

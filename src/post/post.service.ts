@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -51,5 +51,21 @@ export class PostService {
       throw new NotFoundException('You are not allowed to delete this post');
     }
     return this.postRepository.remove(post);
+  }
+
+  async findByCategory(categoryId: number) {
+    return this.postRepository.find({
+      where: { categoryId },
+      relations: ['author','comments', 'category'],
+    });
+  }
+
+  async findByTimestamp(startTimestamp: string, endTimestamp: string) {
+    return this.postRepository.find({
+      where: {
+        createdAt: Between(new Date(startTimestamp), new Date(endTimestamp)),
+      },
+      relations: ['author','comments', 'category'],
+    });
   }
 }

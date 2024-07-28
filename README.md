@@ -1,73 +1,308 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Hospyta Community API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This API allows you to manage posts and comments, including features like filtering posts by categories and timestamps, replying to comments, and ensuring that only the user who created a post or comment can delete or update it.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Endpoints
 
-## Description
+### Posts
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+#### Create a Post
 
-## Installation
+**URL**: `/posts`  
+**Method**: `POST`  
+**Authentication**: `Bearer Token`
 
-```bash
-$ npm install
+**Request Body**:
+```json
+{
+  "categoryId": 1,
+  "image": "https://example.com/image.jpg",
+  "content": "This is a post content"
+}
+```
+Response:
+
+```json
+
+{
+  "id": 1,
+  "categoryId": 1,
+  "userId": 1,
+  "image": "https://example.com/image.jpg",
+  "content": "This is a post content",
+  "createdAt": "2024-07-28T00:20:58.600Z",
+  "updatedAt": "2024-07-28T00:20:58.600Z"
+}
+```
+Get All Posts
+URL: /posts
+Method: GET
+
+Response:
+
+```json
+
+[
+  {
+    "id": 1,
+    "categoryId": 1,
+    "userId": 1,
+    "image": "https://example.com/image.jpg",
+    "content": "This is a post content",
+    "createdAt": "2024-07-28T00:20:58.600Z",
+    "updatedAt": "2024-07-28T00:20:58.600Z",
+    "author": {
+      "id": 1,
+      "name": "Billy Hayes",
+      "username": "john_doe",
+      "picture": "http://placeimg.com/640/480",
+      "email": "Pedro_Zieme39@gmail.com"
+    },
+    "category": {
+      "id": 1,
+      "name": "Handmade Rubber Ball"
+    }
+  }
+]
+```
+Get a Post by ID
+URL: /posts/:id
+Method: GET
+
+Response:
+
+```json
+
+{
+  "id": 1,
+  "categoryId": 1,
+  "userId": 1,
+  "image": "https://example.com/image.jpg",
+  "content": "This is a post content",
+  "createdAt": "2024-07-28T00:20:58.600Z",
+  "updatedAt": "2024-07-28T00:20:58.600Z",
+  "author": {
+    "id": 1,
+    "name": "Billy Hayes",
+    "username": "john_doe",
+    "picture": "http://placeimg.com/640/480",
+    "email": "Pedro_Zieme39@gmail.com"
+  },
+  "category": {
+    "id": 1,
+    "name": "Handmade Rubber Ball"
+  }
+}
+```
+Update a Post by ID
+URL: /posts/:id
+Method: PATCH
+Authentication: Bearer Token
+
+Request Body:
+
+```json
+
+{
+  "categoryId": 1,
+  "image": "https://example.com/image.jpg",
+  "content": "Updated post content"
+}
 ```
 
-## Running the app
+Response:
 
-```bash
-# development
-$ npm run start
+```json
 
-# watch mode
-$ npm run start:dev
+{
+  "id": 1,
+  "categoryId": 1,
+  "userId": 1,
+  "image": "https://example.com/image.jpg",
+  "content": "Updated post content",
+  "createdAt": "2024-07-28T00:20:58.600Z",
+  "updatedAt": "2024-07-28T00:20:58.600Z"
+}
+```
+Delete a Post by ID
+URL: /posts/:id
+Method: DELETE
+Authentication: Bearer Token
 
-# production mode
-$ npm run start:prod
+Response:
+
+```json
+
+{
+  "message": "Post successfully deleted"
+}
+```
+Get Posts by Category
+URL: /posts/category/:categoryId
+Method: GET
+
+Response:
+
+```json
+
+[
+  {
+    "id": 1,
+    "categoryId": 1,
+    "userId": 1,
+    "image": "https://example.com/image.jpg",
+    "content": "This is a post content",
+    "createdAt": "2024-07-28T00:20:58.600Z",
+    "updatedAt": "2024-07-28T00:20:58.600Z",
+    "author": {
+      "id": 1,
+      "name": "Billy Hayes",
+      "username": "john_doe",
+      "picture": "http://placeimg.com/640/480",
+      "email": "Pedro_Zieme39@gmail.com"
+    },
+    "category": {
+      "id": 1,
+      "name": "Handmade Rubber Ball"
+    }
+  }
+]
+```
+Get Posts by Timestamp
+URL: /posts/timestamp
+Method: GET
+
+Query Parameters:
+
+start: Start timestamp in ISO format (e.g., 2024-07-01T00:00:00.000Z)
+end: End timestamp in ISO format (e.g., 2024-07-31T23:59:59.999Z)
+Response:
+
+```json
+
+[
+  {
+    "id": 1,
+    "categoryId": 1,
+    "userId": 1,
+    "image": "https://example.com/image.jpg",
+    "content": "This is a post content",
+    "createdAt": "2024-07-28T00:20:58.600Z",
+    "updatedAt": "2024-07-28T00:20:58.600Z",
+    "author": {
+      "id": 1,
+      "name": "Billy Hayes",
+      "username": "john_doe",
+      "picture": "http://placeimg.com/640/480",
+      "email": "Pedro_Zieme39@gmail.com"
+    },
+    "category": {
+      "id": 1,
+      "name": "Handmade Rubber Ball"
+    }
+  }
+]
+```
+Comments
+Create a Comment
+URL: /comments
+Method: POST
+Authentication: Bearer Token
+
+Request Body:
+
+```json
+
+{
+  "postId": 1,
+  "content": "This is a comment content",
+  "parentCommentId": null // or a comment ID if this is a reply
+}
+```
+Response:
+
+```json
+
+{
+  "id": 1,
+  "postId": 1,
+  "userId": 1,
+  "content": "This is a comment content",
+  "createdAt": "2024-07-28T00:20:58.600Z",
+  "updatedAt": "2024-07-28T00:20:58.600Z",
+  "parentCommentId": null
+}
+```
+Get All Comments for a Post
+URL: /comments/post/:postId
+Method: GET
+
+Response:
+
+```json
+
+[
+  {
+    "id": 1,
+    "postId": 1,
+    "userId": 1,
+    "content": "This is a comment content",
+    "createdAt": "2024-07-28T00:20:58.600Z",
+    "updatedAt": "2024-07-28T00:20:58.600Z",
+    "parentCommentId": null,
+    "replies": [
+      {
+        "id": 2,
+        "postId": 1,
+        "userId": 2,
+        "content": "This is a reply",
+        "createdAt": "2024-07-28T01:00:00.000Z",
+        "updatedAt": "2024-07-28T01:00:00.000Z",
+        "parentCommentId": 1
+      }
+    ]
+  }
+]
+```
+Update a Comment by ID
+URL: /comments/:id
+Method: PATCH
+Authentication: Bearer Token
+
+Request Body:
+
+```json
+
+{
+  "content": "Updated comment content"
+}
+```
+Response:
+
+```json
+{
+  "id": 1,
+  "postId": 1,
+  "userId": 1,
+  "content": "Updated comment content",
+  "createdAt": "2024-07-28T00:20:58.600Z",
+  "updatedAt": "2024-07-28T00:20:58.600Z",
+  "parentCommentId": null
+}
+
 ```
 
-## Test
+Delete a Comment by ID
+URL: /comments/:id
+Method: DELETE
+Authentication: Bearer Token
 
-```bash
-# unit tests
-$ npm run test
+Response:
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```json
+{
+  "message": "Comment successfully deleted"
+}
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Swagger Documentation
+The API includes Swagger documentation for all endpoints. You can access it at /api-docs.
