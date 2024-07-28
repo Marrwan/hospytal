@@ -45,7 +45,7 @@ export class CommentController {
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async update(@Param('id') id: number, @Request() req, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(id, { ...updateCommentDto, userId: req.user.id });
+    return this.commentService.update(id, { ...updateCommentDto, userId: req.user.userId });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -56,6 +56,6 @@ export class CommentController {
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async remove(@Param('id') id: number, @Request() req) {
-    return this.commentService.remove(id, req.user.id);
+    return this.commentService.remove(id, req.user.userId);
   }
 }
