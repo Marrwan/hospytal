@@ -19,7 +19,7 @@ export class CommentController {
   @ApiResponse({ status: 201, description: 'The comment has been successfully created.', type: Comment })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(@Request() req, @Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create({ ...createCommentDto, userId: req.user.id });
+    return this.commentService.create({ ...createCommentDto, userId: req.user.userId });
   }
 
   @Get()
