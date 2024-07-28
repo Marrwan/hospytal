@@ -1,6 +1,6 @@
 import { Post } from 'src/post/entities/post.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Comment {
@@ -15,7 +15,7 @@ export class Comment {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  author: User;
 
   @Column()
   userId: number;
@@ -29,4 +29,14 @@ export class Comment {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Comment, (comment) => comment.replies)
+  @JoinColumn({ name: 'parentId' })
+  parent: Comment;
+
+  @Column({ nullable: true })
+  parentId: number;
+
+  @OneToMany(() => Comment, (comment) => comment.parent)
+  replies: Comment[];
 }
