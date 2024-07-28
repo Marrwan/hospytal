@@ -19,11 +19,11 @@ export class PostService {
   }
 
   findAll() {
-    return this.postRepository.find({ relations: ['user', 'category'] });
+    return this.postRepository.find({ relations: ['author', 'comments', 'category'] });
   }
 
   async findOne(id: number) {
-    const post = await this.postRepository.findOne({ where: { id }, relations: ['user', 'category'] });
+    const post = await this.postRepository.findOne({ where: { id }, relations: ['author', 'comments', 'category'] });
     if (!post) {
       throw new NotFoundException('Post not found');
     }

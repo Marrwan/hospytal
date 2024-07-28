@@ -18,11 +18,11 @@ export class CommentService {
   }
 
   findAll() {
-    return this.commentRepository.find({ relations: ['user', 'post', 'replies'] });
+    return this.commentRepository.find({ relations: ['author', 'post', 'replies'] });
   }
 
   async findOne(id: number) {
-    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['user', 'post', 'replies'] });
+    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['author', 'post', 'replies'] });
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
