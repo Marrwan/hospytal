@@ -1,59 +1,53 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Post } from 'src/post/entities/post.entity';
 import { Comment } from './entities/comment.entity';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-    @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>,
+    private commentRepository: Repository<Comment>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto & { userId: number }) {
-    const post = await this.postRepository.findOneBy({ id: createCommentDto.postId });
-    if (!post) {
-      throw new NotFoundException('Invalid post ID');
-    }
     const comment = this.commentRepository.create(createCommentDto);
-    comment.createdAt = new Date();
     return this.commentRepository.save(comment);
   }
 
-  async findAll() {
-    return this.commentRepository.find({ relations: ['user', 'post'] });
+  findAll() {
+    return this.commentRepository.find({ relations: ['user', 'post', 'replies'] });
   }
 
   async findOne(id: number) {
-    const comment = await this.commentRepository.findOne({
-      where: { id },
-      relations: ['user', 'post'],
-    });
+    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['user', 'post', 'replies'] });
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
     return comment;
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto) {
+  async update(id: number, updateCommentDto: UpdateCommentDto & { userId: number }) {
     const comment = await this.commentRepository.findOneBy({ id });
     if (!comment) {
       throw new NotFoundException('Comment not found');
     }
-    Object.assign(comment, updateCommentDto);
-    return this.commentRepository.save(comment);
+    if (comment.userId !== updateCommentDto.userId) {
+      throw new NotFoundException('You are not allowed to update this comment');
+    }
+    await this.commentRepository.update(id, updateCommentDto);
+    return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: number) {
     const comment = await this.commentRepository.findOneBy({ id });
     if (!comment) {
       throw new NotFoundException('Comment not found');
+    }
+    if (comment.userId !== userId) {
+      throw new NotFoundException('You are not allowed to delete this comment');
     }
     return this.commentRepository.remove(comment);
   }

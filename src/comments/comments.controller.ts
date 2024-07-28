@@ -1,11 +1,10 @@
 import { Controller, Get, Post, Body, Param, Delete, Patch, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Comment } from './entities/comment.entity';
 import { CommentService } from './comments.service';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
-
+import { Comment } from './entities/comment.entity';
 
 
 @ApiTags('comments')
@@ -16,11 +15,11 @@ export class CommentController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a comment' })
+  @ApiOperation({ summary: 'Create a comment or a reply' })
   @ApiResponse({ status: 201, description: 'The comment has been successfully created.', type: Comment })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(@Request() req, @Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create({ ...createCommentDto, userId: req.user.userId });
+    return this.commentService.create({ ...createCommentDto, userId: req.user.id });
   }
 
   @Get()
@@ -45,8 +44,8 @@ export class CommentController {
   @ApiResponse({ status: 200, description: 'The comment has been successfully updated.', type: Comment })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async update(@Param('id') id: number, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(id, updateCommentDto);
+  async update(@Param('id') id: number, @Request() req, @Body() updateCommentDto: UpdateCommentDto) {
+    return this.commentService.update(id, { ...updateCommentDto, userId: req.user.id });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -56,7 +55,7 @@ export class CommentController {
   @ApiResponse({ status: 200, description: 'The comment has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Comment not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async remove(@Param('id') id: number) {
-    return this.commentService.remove(id);
+  async remove(@Param('id') id: number, @Request() req) {
+    return this.commentService.remove(id, req.user.id);
   }
 }
