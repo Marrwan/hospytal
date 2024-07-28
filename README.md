@@ -216,7 +216,7 @@ Request Body:
 {
   "postId": 1,
   "content": "This is a comment content",
-  "parentCommentId": null // or a comment ID if this is a reply
+  "parentId": null // or a comment ID if this is a reply
 }
 ```
 Response:
@@ -230,7 +230,7 @@ Response:
   "content": "This is a comment content",
   "createdAt": "2024-07-28T00:20:58.600Z",
   "updatedAt": "2024-07-28T00:20:58.600Z",
-  "parentCommentId": null
+  "parentId": null
 }
 ```
 Get All Comments for a Post
@@ -249,7 +249,7 @@ Response:
     "content": "This is a comment content",
     "createdAt": "2024-07-28T00:20:58.600Z",
     "updatedAt": "2024-07-28T00:20:58.600Z",
-    "parentCommentId": null,
+    "parentId": null,
     "replies": [
       {
         "id": 2,
@@ -258,7 +258,7 @@ Response:
         "content": "This is a reply",
         "createdAt": "2024-07-28T01:00:00.000Z",
         "updatedAt": "2024-07-28T01:00:00.000Z",
-        "parentCommentId": 1
+        "parentId": 1
       }
     ]
   }
@@ -287,7 +287,7 @@ Response:
   "content": "Updated comment content",
   "createdAt": "2024-07-28T00:20:58.600Z",
   "updatedAt": "2024-07-28T00:20:58.600Z",
-  "parentCommentId": null
+  "parentId": null
 }
 
 ```
